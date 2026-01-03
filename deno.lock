@@ -2,6 +2,7 @@
   "version": "5",
   "specifiers": {
     "jsr:@std/cli@^1.0.25": "1.0.25",
+    "jsr:@std/fmt@^1.0.8": "1.0.8",
     "jsr:@std/internal@^1.0.12": "1.0.12"
   },
   "jsr": {
@@ -11,13 +12,17 @@
         "jsr:@std/internal"
       ]
     },
+    "@std/fmt@1.0.8": {
+      "integrity": "71e1fc498787e4434d213647a6e43e794af4fd393ef8f52062246e06f7e372b7"
+    },
     "@std/internal@1.0.12": {
       "integrity": "972a634fd5bc34b242024402972cd5143eac68d8dffaca5eaa4dba30ce17b027"
     }
   },
   "workspace": {
     "dependencies": [
-      "jsr:@std/cli@^1.0.25"
+      "jsr:@std/cli@^1.0.25",
+      "jsr:@std/fmt@^1.0.8"
     ]
   }
 }
