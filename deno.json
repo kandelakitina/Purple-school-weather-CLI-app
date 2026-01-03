@@ -5,5 +5,8 @@
 	"bin": {
 		"weather": "weather.ts"
 	},
-	"version": "0.0.1"
+	"version": "0.0.1",
+	"imports": {
+		"@std/cli": "jsr:@std/cli@^1.0.25"
+	}
 }
