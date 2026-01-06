@@ -32,7 +32,7 @@ const fetchWeather = async (city: string, token: string) => {
   try {
     printSuccess(`Using token: ${token}`);
 
-    const weather = await getWeatherByCity(city);
+    const weather = await getWeatherByCity(city, { token });
 
     printSuccess(
       `Weather for ${weather.city}${
@@ -61,7 +61,7 @@ const initCLI = async () => {
     return;
   }
 
-  let token: string | null = null;
+  let token: string;
 
   if (tokenArg !== undefined) {
     // If token provided in CLI, use it and save it
@@ -69,13 +69,14 @@ const initCLI = async () => {
     await saveToken(token);
   } else {
     // Attempt to read saved token
-    token = (await getKeyValue("token")) ?? null;
-    if (!token) {
+    const savedToken = await getKeyValue("token");
+    if (!savedToken) {
       printError(
         "No token provided with -t and no token is saved. Please provide a token using -t.",
       );
       return;
     }
+    token = savedToken;
   }
 
   if (city) {

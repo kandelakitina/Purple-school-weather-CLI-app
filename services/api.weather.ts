@@ -2,7 +2,7 @@
 
 import { type GeoLocation, getTopLocation } from "./api.geocoding.ts";
 
-const FORECAST_API = "https://api.open-meteo.com/v1/forecast";
+const FORECAST_API = "https://api.openweathermap.org/data/3.0/onecall";
 
 /* -----------------------------
    Types
@@ -30,8 +30,10 @@ export async function getWeatherByCity(
     language?: string;
     countryCode?: string;
     timezone?: string;
+    token?: string;
   },
 ): Promise<WeatherResult> {
+  // token is reserved for future authenticated APIs
   const location = await resolveCity(city, {
     language: options?.language,
     countryCode: options?.countryCode,
@@ -41,6 +43,7 @@ export async function getWeatherByCity(
     location.latitude,
     location.longitude,
     options?.timezone,
+    options?.token,
   );
 
   return {
@@ -76,6 +79,7 @@ async function fetchCurrentWeather(
   latitude: number,
   longitude: number,
   timezone = "auto",
+  token?: string,
 ): Promise<{
   temperature: number;
   windspeed: number;
@@ -84,11 +88,16 @@ async function fetchCurrentWeather(
   time: string;
 }> {
   const params = new URLSearchParams({
-    latitude: String(latitude),
-    longitude: String(longitude),
-    current_weather: "true",
-    timezone,
+    lat: String(latitude),
+    lon: String(longitude),
+    units: "metric",
+    exclude: "minutely,hourly,daily,alerts",
   });
+
+  // token is required for OpenWeatherMap API
+  if (token) {
+    params.set("appid", token);
+  }
 
   const res = await fetch(`${FORECAST_API}?${params}`);
   if (!res.ok) {
@@ -97,9 +106,16 @@ async function fetchCurrentWeather(
 
   const data = await res.json();
 
-  if (!data.current_weather) {
+  if (!data.current) {
     throw new Error("No current weather data returned");
   }
 
-  return data.current_weather;
+  const current = data.current;
+  return {
+    temperature: current.temp,
+    windspeed: current.wind_speed,
+    winddirection: current.wind_deg,
+    weathercode: current.weather[0].id,
+    time: new Date(current.dt * 1000).toISOString(),
+  };
 }
