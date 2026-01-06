@@ -1,6 +1,6 @@
 // api.weather.ts
 
-import { getTopLocation, GeoLocation } from "./api.geocoding.ts";
+import { type GeoLocation, getTopLocation } from "./api.geocoding.ts";
 
 const FORECAST_API = "https://api.open-meteo.com/v1/forecast";
 
@@ -30,7 +30,7 @@ export async function getWeatherByCity(
     language?: string;
     countryCode?: string;
     timezone?: string;
-  }
+  },
 ): Promise<WeatherResult> {
   const location = await resolveCity(city, {
     language: options?.language,
@@ -40,7 +40,7 @@ export async function getWeatherByCity(
   const weather = await fetchCurrentWeather(
     location.latitude,
     location.longitude,
-    options?.timezone
+    options?.timezone,
   );
 
   return {
@@ -61,7 +61,7 @@ async function resolveCity(
   options?: {
     language?: string;
     countryCode?: string;
-  }
+  },
 ): Promise<GeoLocation> {
   const location = await getTopLocation(city, options);
 
@@ -75,7 +75,7 @@ async function resolveCity(
 async function fetchCurrentWeather(
   latitude: number,
   longitude: number,
-  timezone = "auto"
+  timezone = "auto",
 ): Promise<{
   temperature: number;
   windspeed: number;
