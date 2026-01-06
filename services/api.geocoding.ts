@@ -16,7 +16,7 @@ export async function getCityLocation(
     throw new Error("Name is required for geocoding");
   }
 
-  const url = `${GEOCODING_BASE}?name=${encodeURIComponent(name)}`;
+  const url = `${GEOCODING_BASE}?name=${encodeURIComponent(name)}&count=1`;
 
   const res = await fetch(url);
 
