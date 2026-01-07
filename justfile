@@ -1,6 +1,10 @@
-# Justfile for nodejs
-
 set shell := ["fish", "-c"]
 
-dev:
-    deno run --watch main.ts
+dev *args:
+    deno run \
+        --allow-read=$HOME/weather-data.json \
+        --allow-write=$HOME/weather-data.json \
+        --allow-sys=homedir,osRelease \
+        --allow-net=geocoding-api.open-meteo.com,api.openweathermap.org \
+        --watch \
+        weather.ts {{args}}
