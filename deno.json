@@ -1,5 +1,5 @@
 {
-	"name": "My Deno app",
+	"name": "weather-cli",
 	"exports": "./weather.ts",
 	"main": "weather.ts",
 	"bin": {
