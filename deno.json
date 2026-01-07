@@ -1,11 +1,11 @@
 {
 	"name": "weather-cli",
 	"exports": "./weather.ts",
-	"main": "weather.ts",
+	"main": "./weather.ts",
 	"bin": {
-		"weather": "weather.ts"
+		"weather": "./weather.ts"
 	},
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"imports": {
 		"@std/cli": "jsr:@std/cli@^1.0.25",
 		"@std/fmt": "jsr:@std/fmt@^1.0.8",
