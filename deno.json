@@ -12,13 +12,5 @@
 		"@std/fs": "jsr:@std/fs@^1.0.21",
 		"@std/path": "jsr:@std/path@^1.1.4",
 		"@std/text": "jsr:@std/text@^1.0.16"
-	},
-	"permissions": {
-		"default": {
-			"read": true,
-			"write": ["$HOME/weather-data.json"],
-			"sys": ["homedir", "osRelease"],
-			"net": ["geocoding-api.open-meteo.com", "api.openweathermap.org"]
-		}
 	}
 }
