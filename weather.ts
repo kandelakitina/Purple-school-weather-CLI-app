@@ -28,7 +28,7 @@ const fetchWeather = async function (
 ): Promise<WeatherResult> {
   const token = await getKeyValue("token");
 
-  if (!token) {
+  if (!token || !token.trim().length) {
     throw new Error("API token not found. Please save it using -t <token>");
   }
 

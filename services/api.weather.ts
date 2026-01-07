@@ -56,9 +56,13 @@ export async function getWeather(
   }
 
   const data = await res.json();
-
-  if (!data.current || typeof data.timezone_offset !== "number") {
-    throw new Error("Invalid weather data returned");
+  if (
+    !data.current ||
+    typeof data.current.temp !== "number" ||
+    typeof data.current.dt !== "number" ||
+    typeof data.timezone_offset !== "number"
+  ) {
+    throw new Error("Invalid weather data structure");
   }
 
   return {

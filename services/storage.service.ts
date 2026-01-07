@@ -5,10 +5,21 @@ const filepath = path.join(os.homedir(), "weather-data.json");
 
 type Data = Record<string, string>;
 
+const isValidData = (data: unknown): data is Data => {
+  if (typeof data !== "object" || data === null) return false;
+  return Object.entries(data).every(
+    ([key, value]) => typeof key === "string" && typeof value === "string",
+  );
+};
+
 const readData = async (): Promise<Data> => {
   try {
     const file = await Deno.readTextFile(filepath);
-    return JSON.parse(file) as Data;
+    const parsed = JSON.parse(file);
+    if (!isValidData(parsed)) {
+      throw new Error("Invalid data format in storage file");
+    }
+    return parsed;
   } catch (err) {
     if (err instanceof Deno.errors.NotFound) {
       return {};
