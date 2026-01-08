@@ -1,5 +1,6 @@
 import os from "node:os";
 import * as path from "@std/path";
+import { printSuccess } from "./log.service.ts";
 
 const filepath = path.join(os.homedir(), "weather-data.json");
 
@@ -37,6 +38,7 @@ const saveKeyValue = async (key: string, value: string): Promise<void> => {
   const data = await readData();
   data[key] = value;
   await Deno.writeTextFile(filepath, JSON.stringify(data, null, 2));
+  printSuccess(`${key} saved`);
 };
 
 export { getKeyValue, saveKeyValue };

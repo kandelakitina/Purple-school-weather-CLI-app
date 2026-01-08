@@ -1,14 +1,15 @@
 import { getArgs } from "./helpers/args.ts";
 import { printError, printHelp, printSuccess } from "./services/log.service.ts";
 import { getWeatherByCity } from "./services/api.weather.ts";
+import { getKeyValue, saveKeyValue } from "./services/storage.service.ts";
 
 /* -----------------------------
    Fetch weather helper
 -------------------------------- */
-const fetchWeather = async (city: string) => {
-  if (!city.trim()) {
-    printError("City cannot be blank");
-    return;
+const fetchWeather = async () => {
+  const city = await getKeyValue("city");
+  if (!city) {
+    throw new Error("City is undefined");
   }
 
   try {
@@ -32,15 +33,20 @@ const fetchWeather = async (city: string) => {
    CLI Entry point
 -------------------------------- */
 const initCLI = async () => {
-  const { s: city, h: help } = getArgs(Deno.args);
+  const { s: city, h: help, l: language } = getArgs(Deno.args);
 
   if (help) {
     printHelp();
     return;
   }
 
+  if (language) {
+    await saveKeyValue("language", language);
+  }
+
   if (city) {
-    await fetchWeather(city);
+    await saveKeyValue("city", city);
+    await fetchWeather();
   } else {
     printError("Please provide a city with -s, or use -h for help.");
   }
