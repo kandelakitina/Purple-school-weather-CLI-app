@@ -13,6 +13,6 @@
 		"@std/text": "jsr:@std/text@^1.0.16"
 	},
 	"tasks": {
-		"dev": "deno run --allow-net=geocoding-api.open-meteo.com,api.open-meteo.com weather.ts"
+		"dev": "deno run --allow-read --allow-sys --allow-write --allow-net=geocoding-api.open-meteo.com,api.open-meteo.com weather.ts"
 	}
 }

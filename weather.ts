@@ -1,18 +1,17 @@
 import { getArgs } from "./helpers/args.ts";
 import { printError, printHelp, printSuccess } from "./services/log.service.ts";
 import { getWeatherByCity } from "./services/api.weather.ts";
+import { getKeyValue, saveKeyValue, getCities, saveCities } from "./services/storage.service.ts";
+import { getWeatherDescription } from "./services/weather.descriptions.ts";
 
 /* -----------------------------
    Fetch weather helper
 -------------------------------- */
-const fetchWeather = async (city: string) => {
-  if (!city.trim()) {
-    printError("City cannot be blank");
-    return;
-  }
-
+const fetchWeatherForCity = async (city: string, language?: string) => {
   try {
-    const weather = await getWeatherByCity(city);
+    const weather = await getWeatherByCity(city, { language });
+
+    const description = getWeatherDescription(weather.weathercode, language);
 
     printSuccess(
       `Weather for ${weather.city}${
@@ -20,7 +19,7 @@ const fetchWeather = async (city: string) => {
       }:\n` +
         `🌡 Temperature: ${weather.temperature}°C\n` +
         `💨 Wind: ${weather.windspeed} m/s, direction ${weather.winddirection}°\n` +
-        `☁ Weather code: ${weather.weathercode}\n` +
+        `☁ ${description}\n` +
         `⏰ Time: ${weather.time}`,
     );
   } catch (error) {
@@ -28,21 +27,47 @@ const fetchWeather = async (city: string) => {
   }
 };
 
+const fetchWeatherForAll = async (cities: string[], language?: string) => {
+  for (const city of cities) {
+    await fetchWeatherForCity(city, language);
+  }
+};
+
 /* -----------------------------
    CLI Entry point
 -------------------------------- */
 const initCLI = async () => {
-  const { s: city, h: help } = getArgs(Deno.args);
+  const { s: cities, h: help, l: language } = getArgs(Deno.args);
 
   if (help) {
     printHelp();
     return;
   }
 
-  if (city) {
-    await fetchWeather(city);
+  if (language) {
+    await saveKeyValue("language", language);
+  }
+
+  const savedLanguage = (await getKeyValue("language")) as string | undefined;
+
+  if (cities && cities.length > 0) {
+    const currentCities = await getCities();
+    for (const city of cities) {
+      if (!currentCities.includes(city)) {
+        currentCities.push(city);
+      }
+    }
+    await saveCities(currentCities);
+    await fetchWeatherForAll(cities, savedLanguage);
   } else {
-    printError("Please provide a city with -s, or use -h for help.");
+    const savedCities = await getCities();
+    if (savedCities.length > 1) {
+      await fetchWeatherForAll(savedCities.slice(0, 5), savedLanguage);
+    } else if (savedCities.length === 1) {
+      await fetchWeatherForCity(savedCities[0], savedLanguage);
+    } else {
+      printError("No cities saved. Please provide a city with -s, or use -h for help.");
+    }
   }
 };
 

@@ -13,6 +13,7 @@ const printHelp = () => {
   console.log(dedent`${cyan("Help")}
     No params - shows weather
     -s [city] Sets city
+    -l [language] Sets language (en, es, fr, de)
     -h Shows help
     `);
 };
